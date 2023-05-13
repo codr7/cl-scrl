@@ -1,8 +1,8 @@
-(defpackage lang-test
-  (:use cl lang)
+(defpackage ang-test
+  (:use cl ang)
   (:export run))
 
-(in-package lang-test)
+(in-package ang-test)
 
 (defun run ()
   (with-vm ()

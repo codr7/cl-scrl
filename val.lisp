@@ -1,4 +1,4 @@
-(in-package lang)
+(in-package ang)
 
 (defstruct val-type
   (name (error "Missing name") :type keyword))

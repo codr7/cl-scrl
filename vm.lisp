@@ -1,4 +1,4 @@
-(in-package lang)
+(in-package ang)
 
 (defvar *vm*)
 

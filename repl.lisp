@@ -1,4 +1,4 @@
-(in-package lang)
+(in-package ang)
 
 (defun repl (&key stdin stdout)
   (let ((stdin (or stdin (vm-stdin)))

@@ -1,4 +1,4 @@
-(in-package lang)
+(in-package ang)
 
 (defstruct op)
 
