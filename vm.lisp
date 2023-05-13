@@ -8,8 +8,7 @@
 
 (defstruct vm
   (ops (make-array 0 :element-type 'function :fill-pointer 0)  :type (array function))
-  (task (make-task) :type task)
-  (stack (make-array 0 :element-type 'val :fill-pointer 0) :type (array val)))
+  (task (make-task) :type task))
 
 (defun vm-stdin (&key (vm *vm*))
   (task-stdin (vm-task vm)))

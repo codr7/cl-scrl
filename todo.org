@@ -1,4 +1,5 @@
-* add repl
+* convert fib
+** implement reader
 * add abc lib
 ** add num type
 * fib
