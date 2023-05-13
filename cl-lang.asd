@@ -11,4 +11,5 @@
 	       (:file "task")
 	       (:file "vm")
 	       (:file "op")
+	       (:file "repl")
 	       (:file "test")))
