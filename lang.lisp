@@ -1,9 +1,10 @@
 (defpackage lang
   (:use cl)
-  (:export make-add-op make-push-op make-stop-op make-vm make-val make-val-type
+  (:export make-add-op make-push-op make-stop-op make-task make-vm make-val make-val-type
+	   task-peek task-pop task-push
 	   val-data val-type
 	   version
-	   *vm* vm-emit vm-eval vm-pop vm-push))
+	   *vm* vm-emit vm-eval vm-peek vm-pop vm-push))
 
 (in-package lang)
 

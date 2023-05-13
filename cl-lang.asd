@@ -7,7 +7,8 @@
   :licence "MIT"
   :serial t
   :components ((:file "lang")
-	       (:file "vm")
                (:file "val")
+	       (:file "task")
+	       (:file "vm")
 	       (:file "op")
 	       (:file "test")))
