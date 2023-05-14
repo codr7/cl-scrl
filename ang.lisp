@@ -8,7 +8,7 @@
 	   pop-front pos-col pos-row pos-source push-back
 	   read-id read-ws repl
 	   task-dump-stack task-get task-peek task-pop task-push task-set task-stdin task-stdout
-	   val-data val-dump val-type
+	   val-data val-type
 	   version
 	   vm-dump-stack vm-emit vm-eval vm-get vm-peek vm-pop vm-push vm-set vm-stdin vm-stdout
 	   with-vm))
