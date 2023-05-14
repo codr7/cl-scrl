@@ -12,19 +12,27 @@
 	(tagbody
 	 next
            (fmt " ")
-           (let ((in (read-line stdin nil)))
-             (when in
-               (if (string= in "")
+           (let ((line (read-line stdin nil)))
+             (when line
+               (if (string= line "")
                    (progn
-                     (setf in (get-output-stream-string buf))
                      (restart-case
-			 (let ((pc (vm-emit-pc)))
-			   ;;todo read/emit
+			 (let ((pc (vm-emit-pc))
+			       (fs (new-deque)))
+			   (read-forms (make-string-input-stream (get-output-stream-string buf))
+				       (new-pos "repl")
+				       fs)
+
+			   (file-position buf 0)
+			   
+			   (while (not (zerop (len fs)))
+			     (form-emit (pop-front fs) fs))
+			   
 			   (vm-emit (make-stop-op))
 			   (vm-eval pc)
                            (vm-dump-stack stdout)
                            (terpri stdout))
                        (ignore ()
 			 :report "Ignore condition.")))
-                   (write-string in buf))
+                   (write-string line buf))
                (go next))))))))

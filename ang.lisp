@@ -1,11 +1,16 @@
 (defpackage ang
   (:use cl)
-  (:export make-add-op make-push-op make-stop-op make-task make-vm make-val make-val-type
-	   repl
-	   task-dump-stack task-peek task-pop task-push task-stdin task-stdout
+  (:export *abc-lib* *vm*
+	   env env-get env-set
+	   make-add-op make-id-form make-push-op make-stop-op make-task make-vm make-val make-val-type
+	   new-deque new-pos num-type
+	   len lib
+	   pop-front pos-col pos-row pos-source push-back
+	   read-id read-ws repl
+	   task-dump-stack task-get task-peek task-pop task-push task-set task-stdin task-stdout
 	   val-data val-dump val-type
 	   version
-	   *vm* vm-dump-stack vm-emit vm-eval vm-peek vm-pop vm-push vm-stdin vm-stdout
+	   vm-dump-stack vm-emit vm-eval vm-get vm-peek vm-pop vm-push vm-set vm-stdin vm-stdout
 	   with-vm))
 
 (in-package ang)

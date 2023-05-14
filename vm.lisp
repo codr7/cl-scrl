@@ -7,35 +7,44 @@
      ,@body))
 
 (defstruct vm
-  (ops (make-array 0 :element-type 'function :fill-pointer 0)  :type (array function))
+  (ops (make-array 0 :element-type 'function :fill-pointer 0) :type (array function))
   (task (make-task) :type task))
 
-(defun vm-stdin (&key (vm *vm*))
-  (task-stdin (vm-task vm)))
+(defun vm-stdin ()
+  (task-stdin (vm-task *vm*)))
 
-(defun vm-stdout (&key (vm *vm*))
-  (task-stdout (vm-task vm)))
+(defun vm-stdout ()
+  (task-stdout (vm-task *vm*)))
 
-(defun vm-push (val &key (vm *vm*))
-  (task-push val (vm-task vm)))
+(defun vm-get (key)
+  (task-get (vm-task *vm*) key))
 
-(defun vm-pop (&key (vm *vm*))
-  (task-pop (vm-task vm)))
+(defun vm-set (key val)
+  (task-set (vm-task *vm*) key val))
 
-(defun vm-peek (&key (vm *vm*))
-  (task-peek (vm-task vm)))
+(defun (setf vm-get) (val key)
+  (vm-set key val))
+
+(defun vm-push (val)
+  (task-push val (vm-task *vm*)))
+
+(defun vm-pop (&key)
+  (task-pop (vm-task *vm*)))
+
+(defun vm-peek (&key)
+  (task-peek (vm-task *vm*)))
 
 (defun vm-dump-stack (out &key (vm *vm*))
   (task-dump-stack (vm-task vm) out))
 
-(defun vm-emit (op &key (vm *vm*))
-  (with-slots (ops) vm
-    (vector-push-extend (op-emit op (length ops) :vm vm) ops)))
+(defun vm-emit (op &key)
+  (with-slots (ops) *vm*
+    (vector-push-extend (op-emit op (length ops)) ops)))
 
-(defun vm-emit-pc (&key (vm *vm*))
-  (length (vm-ops vm)))
+(defun vm-emit-pc (&key)
+  (length (vm-ops *vm*)))
 
-(defun vm-eval (pc &key (vm *vm*))
-  (with-slots (ops) vm
-    (setf (task-pc (vm-task vm)) pc)
+(defun vm-eval (pc &key)
+  (with-slots (ops) *vm*
+    (setf (task-pc (vm-task *vm*)) pc)
     (funcall (aref ops pc))))

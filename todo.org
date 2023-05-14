@@ -1,7 +1,7 @@
-* convert fib
-** implement reader
-* add abc lib
-** add num type
 * fib
+** add prims
+*** <, -, +
+** add macros
+*** if, defun
 
-fun fib(n) if n.< 2 n fib n.- 1 .+ fib n.- 2
+defun fib(n) if n.< 2 n fib n.- 1 .+ fib n.- 2

@@ -1,0 +1,24 @@
+(in-package ang)
+
+(defun char-digit (c)
+  (- (char-int c) (char-int #\0)))
+
+(defun syms (&rest args)
+  (with-output-to-string (out)
+    (dolist (a args)
+      (etypecase a
+	(symbol (princ a out))
+	(string (princ (string-upcase a) out))))))
+
+(defun kw (&rest args)
+  (intern (apply #'syms args) 'keyword))
+
+(defmacro while (cnd &body body)
+  (let (($next (gensym)))
+    `(block nil
+       (tagbody
+	  ,$next
+	  (when ,cnd
+	    ,@body
+	    (go ,$next))))))
+ 
