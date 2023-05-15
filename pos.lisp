@@ -9,7 +9,7 @@
   (make-pos :source source :row row :col col))
 
 (defmethod clone ((pos pos))
-  (copy-structe pos))
+  (copy-structure pos))
 
 (defmethod print-object ((pos pos) out)
   (with-slots (file row col) pos

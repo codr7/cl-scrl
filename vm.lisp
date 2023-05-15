@@ -48,3 +48,16 @@
   (with-slots (ops) *vm*
     (setf (task-pc (vm-task *vm*)) pc)
     (funcall (aref ops pc))))
+
+(defun emit-forms (forms)
+  (while (not (zerop (len forms)))
+    (form-emit (pop-front forms) forms)))
+
+(defun eval-string (code &key (pos (new-pos "eval")))
+  (let ((pc (vm-emit-pc))
+	(fs (new-deque)))
+    (read-forms (make-string-input-stream code) pos fs)
+    (emit-forms fs)
+    (vm-emit (make-stop-op))
+    (vm-eval pc)))
+    

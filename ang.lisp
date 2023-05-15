@@ -1,7 +1,7 @@
 (defpackage ang
   (:use cl)
   (:export *abc-lib* *vm*
-	   env env-get env-set
+	   emit-forms env env-get env-set eval-string
 	   make-add-op make-id-form make-push-op make-stop-op make-task make-vm make-val make-val-type
 	   new-deque new-pos num-type
 	   len lib
