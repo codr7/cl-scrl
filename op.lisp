@@ -3,17 +3,17 @@
 (defstruct op
   (pos nil :type (or null pos)))
 
-(defstruct (add-op (:include op)))
+(defstruct (call-op (:include op))
+  (target (error "Missing target") :type t)
+  (ret-pc (error "Missing ret-pc") :type integer))
 
-(defmethod op-emit ((op add-op) pc)
-  (lambda ()
-    (let ((y (vm-pop))
-	  (x (vm-peek)))
-      (setf (val-data x) (+ (val-data x) (val-data y))))
-    (vm-eval (1+ pc))))
+(defmethod op-emit ((op call-op) pc)
+  (lambda()
+    (let ((pc (call (call-op-target op) (call-op-ret-pc op))))
+      (vm-eval pc))))
 
 (defstruct (push-op (:include op))
-  (val (error "Missing val")))
+  (val (error "Missing val") :type val))
 
 (defmethod op-emit ((op push-op) pc)
   (lambda ()

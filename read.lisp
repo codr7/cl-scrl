@@ -5,19 +5,22 @@
    next
      (let ((c (read-char in nil)))
        (when c
-           (case c
-             (#\newline
-              (incf (pos-row pos))
-              (setf (pos-col pos) 0)
-	      (go next))
-	     (#\tab
-	      (incf (pos-col pos))
-	      (go next))
-	     (#\space
-	      (incf (pos-col pos))
-	      (go next))
-	     (otherwise
-              (unread-char c in)))))))
+	 (case c
+           (#\newline
+            (incf (pos-row pos))
+            (setf (pos-col pos) 0)
+	    (go next))
+	   (#\tab
+	    (incf (pos-col pos))
+	    (go next))
+	   (#\space
+	    (incf (pos-col pos))
+	    (go next))
+	   (otherwise
+            (unread-char c in)))))))
+
+(defun ws? (c)
+  (or (char= c #\newline) (char= c #\tab) (char= c #\space)))
 
 (defun read-id (in pos out)
   (let ((fpos (clone pos))
@@ -26,9 +29,13 @@
               next
                 (let ((c (read-char in nil)))
                   (when c
-                    (incf (pos-col pos))
-                    (write-char c out)
-                    (go next)))))))
+		    (if (and (graphic-char-p c)
+			     (not (ws? c)))
+			(progn
+			  (incf (pos-col pos))
+			  (write-char c out)
+			  (go next))
+			(unread-char c in))))))))
     (push-back (make-id-form :pos fpos :name s) out)
     t))
 
@@ -57,6 +64,6 @@
       (t (read-id in pos out)))))
 
 (defun read-forms (in pos out)
-  (when (read-form in pos out)
-    (read-forms in pos out)))
-
+  (if (read-form in pos out)
+      (read-forms in pos out)
+      out))

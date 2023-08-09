@@ -9,11 +9,12 @@
 (defmethod print-object ((form id-form) out)
   (write-string (id-form-name form) out))
 
-(defmethod form-emit ((form id-form) args)
-  (let ((v (vm-get (id-form-name form))))
+(defmethod form-emit ((form id-form) args env)
+  (let* ((n (id-form-name form))
+	 (v (vm-get n)))
     (unless v
-      (error "Unknown: ~a" form))      
-    (vm-emit (make-push-op :pos (form-pos form) :val v))))
+      (error "Unknown: '%v'" n))
+    (val-emit (val-type v) (val-data v) (form-pos form) args env)))
 
 (defstruct (lit-form (:include form))
   (val (error "Missing val") :type val))
@@ -21,5 +22,5 @@
 (defmethod print-object ((form lit-form) out)
   (print-object (lit-form-val form) out))
 
-(defmethod form-emit ((form lit-form) args)
+(defmethod form-emit ((form lit-form) args env)
   (vm-emit (make-push-op :pos (form-pos form) :val (lit-form-val form))))

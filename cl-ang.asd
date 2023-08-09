@@ -9,6 +9,7 @@
   :components ((:file "ang")
 	       (:file "util")
                (:file "val")
+	       (:file "prim")
 	       (:file "task")
 	       (:file "env")
 	       (:file "lib")

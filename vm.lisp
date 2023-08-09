@@ -28,36 +28,34 @@
 (defun vm-push (val)
   (task-push val (vm-task *vm*)))
 
-(defun vm-pop (&key)
+(defun vm-pop ()
   (task-pop (vm-task *vm*)))
 
-(defun vm-peek (&key)
+(defun vm-peek ()
   (task-peek (vm-task *vm*)))
 
-(defun vm-dump-stack (out &key (vm *vm*))
-  (task-dump-stack (vm-task vm) out))
+(defun vm-dump-stack (&optional out)
+  (task-dump-stack (vm-task *vm*) out))
 
-(defun vm-emit (op &key)
+(defun vm-emit (op)
   (with-slots (ops) *vm*
     (vector-push-extend (op-emit op (length ops)) ops)))
 
-(defun vm-emit-pc (&key)
+(defun vm-emit-pc ()
   (length (vm-ops *vm*)))
 
-(defun vm-eval (pc &key)
+(defun vm-eval (pc)
   (with-slots (ops) *vm*
     (setf (task-pc (vm-task *vm*)) pc)
     (funcall (aref ops pc))))
 
 (defun emit-forms (forms)
   (while (not (zerop (len forms)))
-    (form-emit (pop-front forms) forms)))
+    (form-emit (pop-front forms) forms (task-env (vm-task *vm*)))))
 
 (defun eval-string (code &key (pos (new-pos "eval")))
   (let ((pc (vm-emit-pc))
-	(fs (new-deque)))
-    (read-forms (make-string-input-stream code) pos fs)
+	(fs (read-forms (make-string-input-stream code) pos (new-deque))))
     (emit-forms fs)
     (vm-emit (make-stop-op))
     (vm-eval pc)))
-    
