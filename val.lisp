@@ -13,8 +13,11 @@
 (defun new-val (typ dat)
   (make-val :type typ :data dat))
 
-(defmethod print-object ((val val) out)  
-  (print-object (val-data val) out))
-
 (defmethod val-emit (typ dat pos args env)
   (vm-emit (make-push-op :pos pos :val (new-val typ dat))))
+
+(defmethod val-print (typ dat out)  
+  (print-object dat out))
+
+(defmethod print-object ((val val) out)  
+  (val-print (val-type val) (val-data val) out))
