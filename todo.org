@@ -1,9 +1,7 @@
-* add stack-effect method
-** implement for form types
-* pop arg forms recursively until args on stack
 * fib
 ** add <, - prims
 ** add macros
-*** if, fun
+*** if, defun
 
-fun fib if n < 2 n fib n - 1 + fib n - 2
+defun fib () 
+  if < n 2 n + fib - n 1 fib - n 2

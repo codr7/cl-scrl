@@ -8,7 +8,7 @@
 
 (defstruct vm
   (ops (make-array 0 :element-type 'function :fill-pointer 0) :type (array function))
-  (task (make-task) :type task))
+  (task (make-task :env (make-env :parent *abc-lib*)) :type task))
 
 (defun vm-stdin ()
   (task-stdin (vm-task *vm*)))

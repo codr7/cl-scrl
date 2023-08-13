@@ -13,7 +13,7 @@
   (let* ((n (id-form-name form))
 	 (v (vm-get n)))
     (unless v
-      (error "Unknown: '%v'" n))
+      (error "Unknown: '~a'" n))
     (val-emit (val-type v) (val-data v) (form-pos form) args env)))
 
 (defstruct (lit-form (:include form))
