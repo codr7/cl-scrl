@@ -38,6 +38,25 @@
 					  (setf (val-data x) (+ (val-data x) (val-data y))))
 					ret_pc))))
 
+    (env-set lib "-"
+	     (new-val (prim-type lib)
+		      (new-prim "-" 2 (lambda (prim ret_pc)
+					(declare (ignore prim))
+					(let ((y (vm-pop))
+					      (x (vm-peek)))
+					  (setf (val-data x) (- (val-data x) (val-data y))))
+					ret_pc))))
+
+    (env-set lib "<"
+	     (new-val (prim-type lib)
+		      (new-prim "<" 2 (lambda (prim ret_pc)
+					(declare (ignore prim))
+					(let ((y (vm-pop))
+					      (x (vm-peek)))
+					     (setf (val-data x) (< (val-data x) (val-data y))
+						   (val-type x) (bool-type lib)))
+					ret_pc))))
+
     (env-set lib "type"
 	     (new-val (prim-type lib)
 		      (new-prim "type" 1 (lambda (prim ret_pc)

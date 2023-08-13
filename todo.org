@@ -1,5 +1,4 @@
 * fib
-** add <, - prims
 ** add macros
 *** if, defun
 
