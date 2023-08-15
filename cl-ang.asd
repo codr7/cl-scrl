@@ -10,6 +10,7 @@
 	       (:file "util")
                (:file "val")
 	       (:file "prim")
+	       (:file "macro")
 	       (:file "task")
 	       (:file "env")
 	       (:file "lib")

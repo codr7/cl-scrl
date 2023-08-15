@@ -7,7 +7,8 @@
      ,@body))
 
 (defstruct vm
-  (ops (make-array 0 :element-type 'function :fill-pointer 0) :type (array function))
+  (ops1 (make-array 0 :element-type 'op :fill-pointer 0) :type (array op))
+  (ops2 (make-array 0 :element-type 'function :fill-pointer 0) :type (array function))
   (task (make-task :env (make-env :parent *abc-lib*)) :type task))
 
 (defun vm-stdin ()
@@ -37,17 +38,26 @@
 (defun vm-dump-stack (&optional out)
   (task-dump-stack (vm-task *vm*) out))
 
-(defun vm-emit (op)
-  (with-slots (ops) *vm*
-    (vector-push-extend (op-emit op (length ops)) ops)))
+(defun vm-emit (op &key pc)
+  (with-slots (ops1) *vm*
+    (if pc
+	(setf (aref ops1 pc) op)
+	(vector-push-extend op ops1))))
 
 (defun vm-emit-pc ()
-  (length (vm-ops *vm*)))
+  (length (vm-ops1 *vm*)))
+
+(defun vm-compile (pc)
+  (with-slots (ops1 ops2) *vm*
+    (adjust-array ops2 pc)
+    (while (< pc (length ops1))
+      (vector-push-extend (op-compile (aref ops1 pc) pc) ops2)
+      (incf pc))))
 
 (defun vm-eval (pc)
-  (with-slots (ops) *vm*
+  (with-slots (ops2) *vm*
     (setf (task-pc (vm-task *vm*)) pc)
-    (funcall (aref ops pc))))
+    (funcall (aref ops2 pc))))
 
 (defun emit-forms (forms)
   (while (not (zerop (len forms)))
@@ -58,4 +68,5 @@
 	(fs (read-forms (make-string-input-stream code) pos (new-deque))))
     (emit-forms fs)
     (vm-emit (make-stop-op))
+    (vm-compile pc)
     (vm-eval pc)))

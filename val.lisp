@@ -19,5 +19,8 @@
 (defmethod val-print (typ dat out)  
   (print-object dat out))
 
+(defmethod val-true? (typ dat)  
+  dat)
+
 (defmethod print-object ((val val) out)  
   (val-print (val-type val) (val-data val) out))

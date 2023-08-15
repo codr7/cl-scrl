@@ -26,6 +26,7 @@
     (vm-emit (make-push-op :val (make-val :type (num-type *abc-lib*) :data 7)))
     (vm-emit (make-call-op :target (val-data (env-get *abc-lib* "+")) :ret-pc (1+ (vm-emit-pc))))
     (vm-emit (make-stop-op))
+    (vm-compile 0)
     (vm-eval 0)
     (assert (= (val-data (vm-pop)) 42))))
 

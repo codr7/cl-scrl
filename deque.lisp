@@ -25,6 +25,9 @@
 	(setf tail head))
       v)))
 
+(defun peek-front (q)
+  (first (rest (deque-head q))))
+
 (defmethod len ((q deque))
   (deque-len q))
 
