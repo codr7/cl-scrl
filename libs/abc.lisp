@@ -16,6 +16,8 @@
 (defstruct (prim-type (:include val-type)))
 
 (defmethod val-emit ((typ prim-type) dat pos args env)
+  (dotimes (i (prim-nargs dat))
+    (form-emit (pop-front args) args env))
   (vm-emit (make-call-op :pos pos :target dat :ret-pc (1+ (vm-emit-pc)))))
 
 (defmethod val-print ((typ prim-type) dat out)  
