@@ -10,11 +10,27 @@
   (write-string (id-form-name form) out))
 
 (defmethod form-emit ((form id-form) args env)
-  (let* ((n (id-form-name form))
-	 (v (vm-get n)))
-    (unless v
-      (error "Unknown: '~a'" n))
-    (val-emit (val-type v) (val-data v) (form-pos form) args env)))
+  (let ((n (id-form-name form)))
+    (when *emit-fun*
+      (let ((i (position n (fun-args *emit-fun*) :test #'string=)))
+	(when i
+	  (vm-emit (make-fun-arg-op :pos (form-pos form) :index i))
+	  (return-from form-emit))))
+
+    (let ((v (vm-get n)))
+      (unless v
+	(error "Unknown: '~a'" n))
+      (val-emit (val-type v) (val-data v) (form-pos form) args env))))
+
+(defstruct (list-form (:include form))
+  (body (error "Missing body") :type list))
+
+(defmethod print-object ((form list-form) out)
+  (print-object (list-form-body form) out))
+
+(defmethod form-emit ((form list-form) args env)
+  (dolist (f (list-form-body form))
+    (form-emit f args env)))
 
 (defstruct (lit-form (:include form))
   (val (error "Missing val") :type val))

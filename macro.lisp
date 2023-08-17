@@ -10,3 +10,6 @@
 
 (defmethod emit ((macro macro) pos args env)
   (funcall (macro-body macro) macro pos args env))
+
+(defmethod print-object ((macro macro) out)
+  (format out "Macro(~a ~a)" (macro-name macro) (macro-nargs macro)))

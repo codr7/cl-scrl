@@ -5,26 +5,28 @@
 (defmethod val-print ((typ bool-type) dat out)  
   (format out "~a" (if dat #\T #\F)))
 
+(defstruct (fun-type (:include val-type)))
+
+(defmethod val-emit ((typ fun-type) dat pos args env)
+  (dotimes (i (length (fun-args dat)))
+    (form-emit (pop-front args) args env))
+  (vm-emit (make-call-op :pos pos :target dat :return-pc (1+ (vm-emit-pc)))))
+
 (defstruct (macro-type (:include val-type)))
 
 (defmethod val-emit ((typ macro-type) dat pos args env)
   (emit dat pos args env))
-
-(defmethod val-print ((typ macro-type) dat out)  
-  (format out "Macro(~a ~a)" (macro-name dat) (macro-nargs dat)))
 
 (defstruct (prim-type (:include val-type)))
 
 (defmethod val-emit ((typ prim-type) dat pos args env)
   (dotimes (i (prim-nargs dat))
     (form-emit (pop-front args) args env))
-  (vm-emit (make-call-op :pos pos :target dat :ret-pc (1+ (vm-emit-pc)))))
-
-(defmethod val-print ((typ prim-type) dat out)  
-  (format out "Prim(~a ~a)" (prim-name dat) (prim-nargs dat)))
+  (vm-emit (make-call-op :pos pos :target dat :return-pc (1+ (vm-emit-pc)))))
 
 (defstruct (abc-lib (:include lib) (:conc-name nil))
   (bool-type (make-bool-type :name "Bool"))
+  (fun-type (make-fun-type :name "Fun"))
   (meta-type (make-val-type :name "Meta"))
   (macro-type (make-macro-type :name "Macro"))
   (num-type (make-val-type :name "Num"))
@@ -40,6 +42,34 @@
 
     (env-set lib "T" (new-val (bool-type lib) t))
     (env-set lib "F" (new-val (bool-type lib) nil))
+
+    (env-set lib "fun"
+	     (new-val (macro-type lib)
+		      (new-macro "fun" 3 (lambda (macro pos args env)
+					   (declare (ignore macro))
+					   (let ((goto-pc (vm-emit-pc)))
+					     (vm-emit nil)
+
+					     (let (name
+						   fargs
+						   (arg (pop-front args)))
+					       (ecase (type-of arg)
+						 ('list-form
+						  (setf fargs arg))
+						 ('id-form
+						  (setf name (id-form-name arg))
+						  (setf fargs (pop-front args))))
+						 
+					       (let ((*emit-fun*
+						       (make-fun :name name
+								 :args (mapcar #'id-form-name
+									       (list-form-body fargs))
+								 :pc (vm-emit-pc))))
+						 (env-set env name (new-val (fun-type lib) *emit-fun*))
+						 (form-emit (pop-front args) args env)
+						 (vm-emit (make-return-op :pos pos))
+						 (vm-emit (make-goto-op :pos pos :pc (vm-emit-pc))
+							  :pc goto-pc))))))))
     
     (env-set lib "if"
 	     (new-val (macro-type lib)
@@ -66,16 +96,16 @@
 
     (env-set lib "+"
 	     (new-val (prim-type lib)
-		      (new-prim "+" 2 (lambda (prim ret_pc)
+		      (new-prim "+" 2 (lambda (prim pos ret_pc)
 					(declare (ignore prim))
 					(let ((y (vm-pop))
 					      (x (vm-peek)))
 					  (setf (val-data x) (+ (val-data x) (val-data y))))
 					ret_pc))))
-
+    
     (env-set lib "-"
 	     (new-val (prim-type lib)
-		      (new-prim "-" 2 (lambda (prim ret_pc)
+		      (new-prim "-" 2 (lambda (prim pos ret_pc)
 					(declare (ignore prim))
 					(let ((y (vm-pop))
 					      (x (vm-peek)))
@@ -84,7 +114,7 @@
 
     (env-set lib "<"
 	     (new-val (prim-type lib)
-		      (new-prim "<" 2 (lambda (prim ret_pc)
+		      (new-prim "<" 2 (lambda (prim pos ret_pc)
 					(declare (ignore prim))
 					(let ((y (vm-pop))
 					      (x (vm-peek)))
@@ -92,9 +122,18 @@
 						   (val-type x) (bool-type lib)))
 					ret_pc))))
 
+    (env-set lib "trace"
+	     (new-val (prim-type lib)
+		      (new-prim "trace" 0 (lambda (prim pos ret_pc)
+					    (declare (ignore prim))
+					    (let ((enabled? (not (vm-trace?))))
+					      (setf (vm-trace?) enabled?)
+					      (vm-push (new-val (bool-type lib) enabled?)))
+					    ret_pc))))
+
     (env-set lib "type"
 	     (new-val (prim-type lib)
-		      (new-prim "type" 1 (lambda (prim ret_pc)
+		      (new-prim "type" 1 (lambda (prim pos ret_pc)
 					   (declare (ignore prim))
 					   (let ((x (vm-peek)))
 					     (setf (val-data x) (val-type x)

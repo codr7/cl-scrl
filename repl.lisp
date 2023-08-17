@@ -17,11 +17,10 @@
                (if (string= line "")
                    (progn
                      (restart-case
-			 (let ((pc (vm-emit-pc))
-			       (fs (new-deque)))
+			 (progn
 			   (eval-string (get-output-stream-string buf) :pos (new-pos "repl"))
 			   (file-position buf 0)
-                           (vm-dump-stack stdout)
+                           (vm-dump-stack :out stdout)
                            (terpri stdout))
                        (ignore ()
 			 :report "Ignore condition.")))

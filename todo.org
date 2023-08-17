@@ -1,10 +1,13 @@
-* fib
-** add fun macro
-** add bench macro
-** add tail calls 
+* add bench macro
+* rename type to type-of
+* convert ids to kw
+** remove eql from hash tables
+** remove string= from position
+* add tail call support
+* fib tail
 
 fun fib (n) 
-  if < n 2 n + fib - n 1 fib - n 2
+  if < n 2 n else + fib - n 1 fib - n 2
 
 fun fib(n a b)
   if > n 1 fib - n 1 b + a b else if = n 0 a else b

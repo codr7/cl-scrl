@@ -13,6 +13,9 @@
 (defun new-val (typ dat)
   (make-val :type typ :data dat))
 
+(defmethod val-clone (typ dat)
+  (new-val typ dat))
+
 (defmethod val-emit (typ dat pos args env)
   (vm-emit (make-push-op :pos pos :val (new-val typ dat))))
 

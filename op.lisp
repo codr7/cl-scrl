@@ -5,15 +5,36 @@
 
 (defstruct (call-op (:include op))
   (target (error "Missing target") :type t)
-  (ret-pc (error "Missing ret-pc") :type integer))
+  (return-pc (error "Missing return-pc") :type integer))
+
+(defmethod print-object ((op call-op) out)
+  (format out "CALL ~a ~a" (call-op-target op) (call-op-return-pc op)))
 
 (defmethod op-compile ((op call-op) pc)
   (lambda()
-    (let ((pc (call (call-op-target op) (call-op-ret-pc op))))
+    (let ((pc (call (call-op-target op) (op-pos op) (call-op-return-pc op))))
       (vm-eval pc))))
+
+(defstruct (fun-arg-op (:include op))
+  (index (error "Missing index") :type integer))
+
+(defmethod print-object ((op fun-arg-op) out)
+  (format out "FUN-ARG ~a" (fun-arg-op-index op)))
+
+(defmethod op-compile ((op fun-arg-op) pc)
+  (lambda()
+    (let ((c (vm-peek-call)))
+      (unless c
+	(error "No call in progress"))
+      (let ((v (aref (call-args c)  (fun-arg-op-index op))))
+	(vm-push (val-clone (val-type v) (val-data v)))))
+    (vm-eval (1+ pc))))
 
 (defstruct (goto-op (:include op))
   (pc (error "Missing pc") :type integer))
+
+(defmethod print-object ((op goto-op) out)
+  (format out "GOTO ~a" (goto-op-pc op)))
 
 (defmethod op-compile ((op goto-op) pc)
   (lambda()
@@ -21,6 +42,9 @@
 
 (defstruct (if-op (:include op))
   (else-pc (error "Missing else-pc") :type integer))
+
+(defmethod print-object ((op if-op) out)
+  (format out "IF ~a" (if-op-else-pc op)))
 
 (defmethod op-compile ((op if-op) pc)
   (lambda()
@@ -32,12 +56,29 @@
 (defstruct (push-op (:include op))
   (val (error "Missing val") :type val))
 
+(defmethod print-object ((op push-op) out)
+  (format out "PUSH ~a" (push-op-val op)))
+
 (defmethod op-compile ((op push-op) pc)
   (lambda ()
-    (vm-push (push-op-val op))
+    (let ((v (push-op-val op)))
+      (vm-push (val-clone (val-type v) (val-data v))))
     (vm-eval (1+ pc))))
 
+(defstruct (return-op (:include op)))
+
+(defmethod print-object ((op return-op) out)
+  (format out "RETURN"))
+
+(defmethod op-compile ((op return-op) pc)
+  (lambda()
+    (let ((c (vm-pop-call)))
+      (vm-eval (call-return-pc c)))))
+
 (defstruct (stop-op (:include op)))
+
+(defmethod print-object ((op stop-op) out)
+  (format out "STOP"))
 
 (defmethod op-compile ((op stop-op) pc)
   (lambda ()))
