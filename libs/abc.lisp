@@ -17,6 +17,11 @@
 (defmethod val-emit ((typ macro-type) dat pos args env)
   (emit dat pos args env))
 
+(defstruct (num-type (:include val-type)))
+
+(defmethod val= ((typ num-type) dat rhs)
+  (= dat (val-data rhs)))
+
 (defstruct (prim-type (:include val-type)))
 
 (defmethod val-emit ((typ prim-type) dat pos args env)
@@ -29,7 +34,7 @@
   (fun-type (make-fun-type :name "Fun"))
   (meta-type (make-val-type :name "Meta"))
   (macro-type (make-macro-type :name "Macro"))
-  (num-type (make-val-type :name "Num"))
+  (num-type (make-num-type :name "Num"))
   (prim-type (make-prim-type :name "Prim")))
 
 (defun new-abc-lib ()
@@ -43,6 +48,17 @@
     (env-set lib "T" (new-val (bool-type lib) t))
     (env-set lib "F" (new-val (bool-type lib) nil))
 
+    (env-set lib "bench"
+	     (new-val (macro-type lib)
+		      (new-macro "bench" 2 (lambda (macro pos args env)
+					     (declare (ignore macro))
+					     (let ((reps (lit-form-val (pop-front args))))
+					       (unless (eq (val-type reps) (num-type *abc-lib*))
+						 (error "Invalid reps: ~a" reps))
+					       (vm-emit (make-bench-op :pos pos :reps (val-data reps))))
+					     (form-emit (pop-front args) args env)
+					     (vm-emit (make-stop-op :pos pos))))))
+    
     (env-set lib "fun"
 	     (new-val (macro-type lib)
 		      (new-macro "fun" 3 (lambda (macro pos args env)
@@ -59,7 +75,7 @@
 						 ('id-form
 						  (setf name (id-form-name arg))
 						  (setf fargs (pop-front args))))
-						 
+					       
 					       (let ((*emit-fun*
 						       (make-fun :name name
 								 :args (mapcar #'id-form-name
@@ -118,10 +134,30 @@
 					(declare (ignore prim))
 					(let ((y (vm-pop))
 					      (x (vm-peek)))
-					     (setf (val-data x) (< (val-data x) (val-data y))
-						   (val-type x) (bool-type lib)))
+					  (setf (val-data x) (< (val-data x) (val-data y))
+						(val-type x) (bool-type lib)))
+					ret_pc))))
+    
+    (env-set lib ">"
+	     (new-val (prim-type lib)
+		      (new-prim ">" 2 (lambda (prim pos ret_pc)
+					(declare (ignore prim))
+					(let ((y (vm-pop))
+					      (x (vm-peek)))
+					  (setf (val-data x) (> (val-data x) (val-data y))
+						(val-type x) (bool-type lib)))
 					ret_pc))))
 
+    (env-set lib "="
+	     (new-val (prim-type lib)
+		      (new-prim "=" 2 (lambda (prim pos ret_pc)
+					(declare (ignore prim))
+					(let ((y (vm-pop))
+					      (x (vm-peek)))
+					  (setf (val-data x) (val= (val-type x) (val-data x) y)
+						(val-type x) (bool-type lib)))
+					ret_pc))))
+    
     (env-set lib "trace"
 	     (new-val (prim-type lib)
 		      (new-prim "trace" 0 (lambda (prim pos ret_pc)

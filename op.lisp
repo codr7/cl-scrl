@@ -3,6 +3,26 @@
 (defstruct op
   (pos nil :type (or null pos)))
 
+(defstruct (bench-op (:include op))
+  (reps (error "Missing reps") :type integer))
+
+(defmethod print-object ((op bench-op) out)
+  (format out "BENCH ~a" (bench-op-reps op)))
+
+(define-symbol-macro +time-units-per-ms+ (/ internal-time-units-per-second 1000))
+
+(defmethod op-compile ((op bench-op) pc)
+  (lambda()
+    (let ((start (get-internal-real-time))
+	  (stack-length (length (vm-stack))))
+      (dotimes (i (bench-op-reps op))
+	(vm-eval (1+ pc))
+	(setf (fill-pointer (vm-stack)) stack-length))
+      (vm-push (new-val (num-type *abc-lib*)
+			(round (/ (- (get-internal-real-time) start)
+				  +time-units-per-ms+)))))
+    (1+ (task-pc (vm-task *vm*)))))
+
 (defstruct (call-op (:include op))
   (target (error "Missing target") :type t)
   (return-pc (error "Missing return-pc") :type integer))

@@ -1,4 +1,3 @@
-* add bench macro
 * rename type to type-of
 * convert ids to kw
 ** remove eql from hash tables
@@ -6,8 +5,16 @@
 * add tail call support
 * fib tail
 
+(declaim (optimize (safety 0) (debug 0) (speed 3)))
+
 fun fib (n) 
   if < n 2 n else + fib - n 1 fib - n 2
 
+bench 100 fib 20
+888
+
 fun fib(n a b)
   if > n 1 fib - n 1 b + a b else if = n 0 a else b
+
+bench 10000 fib 70 0 1
+416

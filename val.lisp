@@ -25,5 +25,12 @@
 (defmethod val-true? (typ dat)  
   dat)
 
+(defmethod val= (typ dat rhs)
+  (eq dat (val-data rhs)))
+
+(defmethod val= :around (typ dat rhs)
+  (when (eq (val-type rhs) typ)
+    (call-next-method)))
+
 (defmethod print-object ((val val) out)  
   (val-print (val-type val) (val-data val) out))
