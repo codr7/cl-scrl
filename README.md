@@ -12,7 +12,7 @@ scrl v1
 [3]
 ```
 
-### performance
+## performance
 `bench` returns the number of milliseconds it takes to run it's body `N` times.
 
 #### recursive fibonacci
