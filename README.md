@@ -15,7 +15,7 @@ scrl v1
 ## performance
 `bench` returns the number of milliseconds it takes to run it's body `N` times.
 
-#### recursive fibonacci
+### recursive fibonacci
 
 ```
  fun fib (n) 
@@ -26,7 +26,7 @@ scrl v1
 [764]
 ```
 
-#### tail recursive fibonacci
+### tail recursive fibonacci
 
 ```
  fun fib(n a b)
