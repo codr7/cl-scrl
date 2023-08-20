@@ -6,7 +6,7 @@
     (flet ((fmt (spec &rest args)
              (apply #'format stdout spec args)
              (finish-output stdout)))
-      (fmt "scrl v~a~%~%" version)
+      (fmt "scrl v~a~%~%" +version+)
 
       (let ((buf (make-string-output-stream)))
 	(tagbody

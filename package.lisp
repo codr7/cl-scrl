@@ -11,12 +11,17 @@
 	   read-forms read-id read-ws repl
 	   task-dump-stack task-get task-peek task-pop task-push task-set task-stdin task-stdout
 	   val-data val-type
-	   version
+	   +version+
 	   vm-compile vm-dump-stack vm-emit vm-emit-pc vm-eval vm-get vm-peek vm-pop vm-push vm-set vm-stdin
 	   vm-stdout
 	   with-vm))
 
 (in-package scrl)
 
-(define-symbol-macro version
+(define-symbol-macro +version+
     (slot-value (asdf:find-system 'scrl) 'asdf:version))
+
+(defvar *macro-type*)
+(defvar *prim-type*)
+
+(defvar *ret* nil)

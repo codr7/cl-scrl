@@ -1,6 +1,6 @@
 (in-package scrl)
 
-(declaim (optimize (safety 0) (debug 0) (speed 3)))
+(declaim (optimize (safety 0) (debug 3) (speed 3)))
 
 (defstruct op
   (pos nil :type (or null pos)))
@@ -27,14 +27,14 @@
 
 (defstruct (call-op (:include op))
   (target (error "Missing target") :type t)
-  (return-pc (error "Missing return-pc") :type integer))
+  (ret-pc (error "Missing ret-pc") :type integer))
 
 (defmethod print-object ((op call-op) out)
-  (format out "CALL ~a ~a" (call-op-target op) (call-op-return-pc op)))
+  (format out "CALL ~a ~a" (call-op-target op) (call-op-ret-pc op)))
 
 (defmethod op-compile ((op call-op) pc)
   (lambda()
-    (let ((pc (call (call-op-target op) (op-pos op) (call-op-return-pc op))))
+    (let ((pc (call (call-op-target op) (op-pos op) (call-op-ret-pc op))))
       (vm-eval pc))))
 
 (defstruct (fun-arg-op (:include op))
@@ -87,15 +87,15 @@
       (vm-push (val-clone (val-type v) (val-data v))))
     (vm-eval (1+ pc))))
 
-(defstruct (return-op (:include op)))
+(defstruct (ret-op (:include op)))
 
-(defmethod print-object ((op return-op) out)
-  (format out "RETURN"))
+(defmethod print-object ((op ret-op) out)
+  (format out "RET"))
 
-(defmethod op-compile ((op return-op) pc)
+(defmethod op-compile ((op ret-op) pc)
   (lambda()
     (let ((c (vm-pop-call)))
-      (vm-eval (call-return-pc c)))))
+      (vm-eval (call-ret-pc c)))))
 
 (defstruct (stop-op (:include op)))
 
@@ -104,3 +104,15 @@
 
 (defmethod op-compile ((op stop-op) pc)
   (lambda ()))
+
+(defstruct (tail-call-op (:include op))
+  (target (error "Missing target") :type fun)
+  (ret-pc (error "Missing ret-pc") :type integer))
+
+(defmethod print-object ((op tail-call-op) out)
+  (format out "TAIL-CALL ~a ~a" (tail-call-op-target op) (tail-call-op-ret-pc op)))
+
+(defmethod op-compile ((op tail-call-op) pc)
+  (lambda()
+    (let ((pc (tail-call (tail-call-op-target op) (op-pos op) (tail-call-op-ret-pc op))))
+      (vm-eval pc))))

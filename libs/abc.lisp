@@ -1,6 +1,6 @@
 (in-package scrl)
 
-(declaim (optimize (safety 0) (debug 0) (speed 3)))
+(declaim (optimize (safety 0) (debug 3) (speed 3)))
 
 (defstruct (bool-type (:include val-type)))
 
@@ -12,7 +12,10 @@
 (defmethod val-emit ((typ fun-type) dat pos args env)
   (dotimes (i (length (fun-args dat)))
     (form-emit (pop-front args) args env))
-  (vm-emit (make-call-op :pos pos :target dat :return-pc (1+ (vm-emit-pc)))))
+  (let ((ret-pc (1+ (vm-emit-pc))))
+    (if *ret*
+	(vm-emit (make-tail-call-op :pos pos :target dat :ret-pc ret-pc))
+	(vm-emit (make-call-op :pos pos :target dat :ret-pc ret-pc)))))
 
 (defstruct (macro-type (:include val-type)))
 
@@ -21,15 +24,17 @@
 
 (defstruct (num-type (:include val-type)))
 
-(defmethod val= ((typ num-type) dat rhs)
-  (= dat (val-data rhs)))
+(defmethod val= ((typ num-type) x rhs)
+  (let ((y (val-data rhs)))
+    (declare (type number x y))
+    (= x y)))
 
 (defstruct (prim-type (:include val-type)))
 
 (defmethod val-emit ((typ prim-type) dat pos args env)
   (dotimes (i (prim-nargs dat))
     (form-emit (pop-front args) args env))
-  (vm-emit (make-call-op :pos pos :target dat :return-pc (1+ (vm-emit-pc)))))
+  (vm-emit (make-call-op :pos pos :target dat :ret-pc (1+ (vm-emit-pc)))))
 
 (defstruct (abc-lib (:include lib) (:conc-name nil))
   (bool-type (make-bool-type :name :|Bool|))
@@ -38,9 +43,6 @@
   (macro-type (make-macro-type :name :|Macro|))
   (num-type (make-num-type :name :|Num|))
   (prim-type (make-prim-type :name :|Prim|)))
-
-(defvar *macro-type*)
-(defvar *prim-type*)
 
 (defun new-abc-lib ()
   (let* ((lib (make-abc-lib :name "abc"))
@@ -86,7 +88,7 @@
 						       :pc (vm-emit-pc))))
 				       (env-set env name (new-val (fun-type lib) *emit-fun*))
 				       (form-emit (pop-front args) args env)
-				       (vm-emit (make-return-op :pos pos))
+				       (vm-emit (make-ret-op :pos pos))
 				       (vm-emit (make-goto-op :pos pos :pc (vm-emit-pc))
 						:pc goto-pc))))))
     
@@ -111,6 +113,12 @@
 				    (vm-emit (make-if-op :pos pos :else-pc else-pc)
 					     :pc if-pc)))))
 
+    (env-set-macro lib :|ret| 1 (lambda (macro pos args env)
+				  (declare (ignore macro))
+				  (let ((*ret* t))
+				    (form-emit (pop-front args) args env))
+				  (vm-emit (make-ret-op :pos pos))))
+        
     (env-set-prim lib :|+| 2 (lambda (prim pos ret_pc)
 			      (declare (ignore prim))
 			      (let ((y (vm-pop))

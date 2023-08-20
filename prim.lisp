@@ -10,8 +10,8 @@
 (defun new-prim (name nargs body)
   (make-prim :name name :nargs nargs :body body))
 
-(defmethod call ((prim prim) pos return-pc)
-  (funcall (prim-body prim) prim pos return-pc))
+(defmethod call ((prim prim) pos ret-pc)
+  (funcall (prim-body prim) prim pos ret-pc))
 
 (defmethod print-object ((prim prim) out)
   (format out "Prim(~a ~a)" (prim-name prim) (prim-nargs prim)))

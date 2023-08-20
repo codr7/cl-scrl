@@ -1,3 +1,1 @@
-* add load prim
-* add tail call support
-** fib
+

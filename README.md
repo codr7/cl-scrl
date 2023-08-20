@@ -36,11 +36,11 @@ $ python3 fibrec.py
 
 ```
  fun fib(n a b)
-   if > n 1 fib - n 1 b + a b else if = n 0 a else b
+   if > n 1 ret fib - n 1 b + a b else if = n 0 a else b
 
  bench 10000 fib 70 0 1
  
-[310]
+[300]
 ```
 
 ```
