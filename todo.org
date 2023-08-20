@@ -1,4 +1,3 @@
 * add load prim
-* py bench
 * add tail call support
 ** fib

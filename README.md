@@ -13,6 +13,7 @@ scrl v1
 ```
 
 ## performance
+The VM currently runs around 10x slower than Python.
 `bench` returns the number of milliseconds it takes to run it's body `N` times.
 
 ### recursive fibonacci
@@ -26,6 +27,11 @@ scrl v1
 [764]
 ```
 
+```
+$ python3 fibrec.py 
+81
+```
+
 ### tail recursive fibonacci
 
 ```
@@ -35,4 +41,9 @@ scrl v1
  bench 10000 fib 70 0 1
  
 [310]
+```
+
+```
+$ python3 fibtail.py 
+41
 ```
