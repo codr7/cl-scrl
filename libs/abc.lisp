@@ -1,5 +1,7 @@
 (in-package ang)
 
+(declaim (optimize (safety 0) (debug 0) (speed 3)))
+
 (defstruct (bool-type (:include val-type)))
 
 (defmethod val-print ((typ bool-type) dat out)  

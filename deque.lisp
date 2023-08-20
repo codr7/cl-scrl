@@ -1,5 +1,7 @@
 (in-package ang)
 
+(declaim (optimize (safety 0) (debug 0) (speed 3)))
+
 (defstruct deque 
   (head (error "Missing head") :type list)
   (tail (error "Missing tail")  :type list)

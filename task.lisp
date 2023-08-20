@@ -1,5 +1,7 @@
 (in-package ang)
 
+(declaim (optimize (safety 0) (debug 0) (speed 3)))
+
 (defstruct task
   (stdin *standard-input* :type stream)
   (stdout *standard-output* :type stream)

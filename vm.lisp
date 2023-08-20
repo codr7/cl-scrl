@@ -1,5 +1,7 @@
 (in-package ang)
 
+(declaim (optimize (safety 0) (debug 0) (speed 3)))
+
 (defvar *vm*)
 
 (defmacro with-vm ((&rest args) &body body)

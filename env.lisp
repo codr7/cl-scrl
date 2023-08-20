@@ -1,5 +1,7 @@
 (in-package ang)
 
+(declaim (optimize (safety 0) (debug 0) (speed 3)))
+
 (defstruct env
   (parent nil :type (or null env))
   (bindings (make-hash-table) :type hash-table))

@@ -1,5 +1,7 @@
 (in-package ang)
 
+(declaim (optimize (safety 0) (debug 0) (speed 3)))
+
 (defstruct pos
   (source (error "Missing source") :type string)
   (row (error "Missing row") :type fixnum)

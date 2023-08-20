@@ -1,5 +1,7 @@
 (in-package ang)
 
+(declaim (optimize (safety 0) (debug 0) (speed 3)))
+
 (defun char-digit (c)
   (- (char-int c) (char-int #\0)))
 
