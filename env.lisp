@@ -2,7 +2,7 @@
 
 (defstruct env
   (parent nil :type (or null env))
-  (bindings (make-hash-table :test 'equal) :type hash-table))
+  (bindings (make-hash-table) :type hash-table))
 
 (defun env-get (env key)
   (let ((v (gethash key (env-bindings env))))

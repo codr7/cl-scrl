@@ -1,10 +1,10 @@
 (in-package ang)
 
 (defstruct val-type
-  (name (error "Missing name") :type string))
+  (name (error "Missing name") :type symbol))
 
 (defmethod print-object ((typ val-type) out)  
-  (write-string (val-type-name typ) out))
+  (write-string (symbol-name (val-type-name typ)) out))
 
 (defstruct val
   (type (error "Missing type") :type val-type)

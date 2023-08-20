@@ -6,9 +6,7 @@
 (defun syms (&rest args)
   (with-output-to-string (out)
     (dolist (a args)
-      (etypecase a
-	(symbol (princ a out))
-	(string (princ (string-upcase a) out))))))
+      (princ a out))))
 
 (defun kw (&rest args)
   (intern (apply #'syms args) 'keyword))

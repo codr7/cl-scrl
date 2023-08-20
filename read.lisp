@@ -36,7 +36,7 @@
 			  (write-char c out)
 			  (go next))
 			(unread-char c in))))))))
-    (push-back (make-id-form :pos fpos :name s) out)))
+    (push-back (make-id-form :pos fpos :name (kw s)) out)))
 
 (defun read-list (in pos out)
   (let ((fpos (clone pos))

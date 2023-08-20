@@ -1,7 +1,7 @@
 (in-package ang)
 
 (defstruct macro
-  (name (error "Missing name") :type string)
+  (name (error "Missing name") :type symbol)
   (nargs (error "Missing nargs") :type integer)
   (body (error "Missing body") :type function))
 

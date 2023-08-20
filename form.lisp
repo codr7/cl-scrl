@@ -4,15 +4,15 @@
   (pos (error "Missing pos") :type pos))
 
 (defstruct (id-form (:include form))
-  (name (error "Missing name") :type string))
+  (name (error "Missing name") :type symbol))
 
 (defmethod print-object ((form id-form) out)
-  (write-string (id-form-name form) out))
+  (write-string (symbol-name (id-form-name form)) out))
 
 (defmethod form-emit ((form id-form) args env)
   (let ((n (id-form-name form)))
     (when *emit-fun*
-      (let ((i (position n (fun-args *emit-fun*) :test #'string=)))
+      (let ((i (position n (fun-args *emit-fun*))))
 	(when i
 	  (vm-emit (make-fun-arg-op :pos (form-pos form) :index i))
 	  (return-from form-emit))))

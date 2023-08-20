@@ -3,7 +3,7 @@
 (defvar *emit-fun* nil)
 
 (defstruct fun
-  (name (error "Missing name") :type string)
+  (name (error "Missing name") :type symbol)
   (args (error "Missing args") :type list)
   (pc (error "Missing pc") :type integer))
 
