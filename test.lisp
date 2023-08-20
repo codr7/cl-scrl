@@ -1,8 +1,8 @@
-(defpackage ang-test
-  (:use cl ang)
+(defpackage scrl-test
+  (:use cl scrl)
   (:export run))
 
-(in-package ang-test)
+(in-package scrl-test)
 
 (defun test-deque ()
   (let ((q (new-deque 1 2)))
@@ -16,9 +16,9 @@
 (defun test-read ()
   (let ((fs (read-forms (make-string-input-stream "35 + 7") (new-pos "test-read") (new-deque))))
     (destructuring-bind (x y z) (deque-items fs) 
-      (assert (eq (type-of x) 'ang:lit-form))
-      (assert (eq (type-of y) 'ang:id-form))
-      (assert (eq (type-of z) 'ang:lit-form)))))
+      (assert (eq (type-of x) 'scrl:lit-form))
+      (assert (eq (type-of y) 'scrl:id-form))
+      (assert (eq (type-of z) 'scrl:lit-form)))))
 
 (defun test-vm ()
   (with-vm ()

@@ -1,12 +1,12 @@
-(asdf:defsystem cl-ang
-  :name "cl-ang"
+(asdf:defsystem scrl
+  :name "scrl"
   :version "1"
   :maintainer "codr7"
   :author "codr7"
-  :description "a scripting language/virtual machine"
+  :description "a scripting language/VM"
   :licence "MIT"
   :serial t
-  :components ((:file "ang")
+  :components ((:file "package")
 	       (:file "util")
                (:file "val")
 	       (:file "macro")

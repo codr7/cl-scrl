@@ -1,4 +1,4 @@
-(defpackage ang
+(defpackage scrl
   (:use cl)
   (:export *abc-lib* *vm*
 	   deque-items
@@ -16,7 +16,7 @@
 	   vm-stdout
 	   with-vm))
 
-(in-package ang)
+(in-package scrl)
 
 (define-symbol-macro version
-    (slot-value (asdf:find-system 'cl-ang) 'asdf:version))
+    (slot-value (asdf:find-system 'scrl) 'asdf:version))

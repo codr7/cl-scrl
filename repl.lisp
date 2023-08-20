@@ -1,4 +1,4 @@
-(in-package ang)
+(in-package scrl)
 
 (defun repl (&key stdin stdout)
   (let ((stdin (or stdin (vm-stdin)))
@@ -6,7 +6,7 @@
     (flet ((fmt (spec &rest args)
              (apply #'format stdout spec args)
              (finish-output stdout)))
-      (fmt "ang v~a~%~%" version)
+      (fmt "scrl v~a~%~%" version)
 
       (let ((buf (make-string-output-stream)))
 	(tagbody
