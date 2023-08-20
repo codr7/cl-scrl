@@ -13,3 +13,12 @@
 
 (defun (setf env-get) (val env key)
   (env-set env key val))
+
+(defun env-set-macro (env name nargs body)
+  (env-set env name (new-val *macro-type* (new-macro name nargs body))))
+
+(defun env-set-prim (env name nargs body)
+  (env-set env name (new-val *prim-type* (new-prim name nargs body))))
+
+(defun env-set-val (env key typ dat)
+  (env-set env key (new-val typ dat)))
