@@ -13,7 +13,7 @@ scrl v1
 ```
 
 ## performance
-The VM currently runs around 10x slower than Python.
+The VM currently runs around 9x as slow as Python.
 `bench` returns the number of milliseconds it takes to run it's body `N` times.
 
 ### recursive fibonacci
