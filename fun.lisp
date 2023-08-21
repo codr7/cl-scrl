@@ -18,27 +18,26 @@
   (args (error "Missing args") :type (array val))
   (ret-pc (error "Missing ret-pc") :type integer))
 
+(defun vm-fun-args (fun)
+  (let* ((s (vm-stack))
+	 (i (- (length s) (length (fun-args fun))))
+	 (args (subseq s i)))
+    (setf (fill-pointer s) i)
+    args))
+
 (defmethod call ((fun fun) pos ret-pc)
-  (let* ((i (- (length (vm-stack)) (length (fun-args fun))))
-	 (args (subseq (vm-stack) i)))
-    (setf (fill-pointer (vm-stack)) i)
-  
-    (let ((c (make-call :fun fun
-			:pos pos
-			:args args
-			:ret-pc ret-pc)))
-      (vm-push-call c)))
-    
-    (fun-pc fun))
+  (let ((c (make-call :fun fun
+		      :pos pos
+		      :args (vm-fun-args fun)
+		      :ret-pc ret-pc)))
+    (vm-push-call c))
+
+  (fun-pc fun))
 
 (defun tail-call (fun pos ret-pc)
-  (let* ((i (- (length (vm-stack)) (length (fun-args fun))))
-	 (args (subseq (vm-stack) i)))
-    (setf (fill-pointer (vm-stack)) i)
-
-    (let ((c (vm-peek-call)))
-      (setf (call-fun c) fun)
-      (setf (call-pos c) pos)
-      (setf (call-args c) args)))
-
+  (let ((c (vm-peek-call)))
+    (setf (call-fun c) fun
+	  (call-pos c) pos
+	  (call-args c) (vm-fun-args fun)))
+  
   (fun-pc fun))
