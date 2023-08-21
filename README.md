@@ -20,11 +20,11 @@ The VM currently runs around 9x as slow as Python.
 
 ```
  fun fib (n) 
-   if < n 2 n else + fib - n 1 fib - n 2
+   if < n 2 n else + fib dec n fib - n 2
 
  bench 100 fib 20
 
-[724]
+[712]
 ```
 
 ```
@@ -36,11 +36,11 @@ $ python3 fibrec.py
 
 ```
  fun fib(n a b)
-   if > n 1 ret fib - n 1 b + a b else if = n 0 a else b
+   if > n 1 ret fib dec n b + a b else if = n 0 a else b
 
  bench 10000 fib 70 0 1
  
-[288]
+[272]
 ```
 
 ```
