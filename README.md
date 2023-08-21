@@ -24,7 +24,7 @@ The VM currently runs around 10x slower than Python.
 
  bench 100 fib 20
 
-[764]
+[724]
 ```
 
 ```
@@ -40,7 +40,7 @@ $ python3 fibrec.py
 
  bench 10000 fib 70 0 1
  
-[300]
+[288]
 ```
 
 ```

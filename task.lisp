@@ -8,8 +8,8 @@
   (trace? nil :type boolean)
   (pc 0 :type fixnum)
   (env (make-env) :type env)
-  (stack (make-array 0 :element-type 'val :fill-pointer 0) :type (array val))
-  (calls (make-array 0 :element-type 'call :fill-pointer 0) :type (array call)))
+  (stack (make-array 3 :element-type 'val :fill-pointer 0) :type (array val))
+  (calls (make-array 3 :element-type 'call :fill-pointer 0) :type (array call)))
 
 (defun task-get (task key)
   (env-get (task-env task) key))
