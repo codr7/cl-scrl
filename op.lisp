@@ -1,6 +1,6 @@
 (in-package scrl)
 
-(declaim (optimize (safety 0) (debug 3) (speed 3)))
+(declaim (optimize (safety 0) (debug 0) (speed 3)))
 
 (defstruct op
   (pos nil :type (or null pos)))
